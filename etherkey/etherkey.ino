@@ -2,7 +2,6 @@
 #include <EEPROM.h>
 
 #ifdef ARDUINO_AVR_LEONARDO
-#include "Keyboard.h"
 #include "compat-arduino.h"
 #endif
 

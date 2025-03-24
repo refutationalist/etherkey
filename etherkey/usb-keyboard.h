@@ -13,6 +13,11 @@
 #define EE_MODE 56
 #define EE_VERBOSITY 57
 
+// just a way to normalize checks for verbosity mode.
+// silent isn't used so far, but it's here for completeness.
+#define IF_STANDARD if ( (verbosity && STANDARD) == STANDARD )
+#define IF_VERBOSE if (verbosity == VERBOSE)
+#define IF_SILENT if (verbosity == SILENT)
 
 // Util functions
 int mode_select(char* in_ascii);

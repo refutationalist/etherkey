@@ -1,5 +1,8 @@
-// this is a group of rebindings to work with ATmega32u4
+#pragma once
 
+#include "Keyboard.h"
+
+// this is a group of rebindings to work with ATmega32u4
 // shamelessly stolen from:
 // https://www.sjoerdlangkemper.nl/2022/11/16/running-etherkey-on-arduino-leonardo/
 
@@ -24,4 +27,5 @@
 
 #define keyboard_leds 0
 
+// empty is defined differently, apparently.
 #define PEEK_EMPTY -1
