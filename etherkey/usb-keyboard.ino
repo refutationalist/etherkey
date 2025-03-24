@@ -53,7 +53,7 @@ int verbose_select(char in_ascii) {
   int newverbose;
 
   if (in_ascii == VPREFIX) {
-    verbosity = (++verbosity) % (sizeof(verbosity) + 1);
+    verbosity = (++verbosity) % VERBOSITY_LEN;
     SerialPrintfln("--> Verbosity: %s", verbosity_strings[verbosity]);
     EEPROM.update(EE_VERBOSITY, verbosity);
     return 1;
@@ -330,7 +330,7 @@ void c_parse(char* str) {
       // Check if input is a keyname and send it
 
       if (!c_parse_ext(pch, false, 0)) {
-        SerialPrintfln("--> Bad command or taco");
+        HWSERIAL.println(F("--> Bad command or taco"));
       }
       break;
   }

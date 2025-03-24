@@ -14,16 +14,15 @@ char kbd_buff[KBD_BUFFSZ];
 int kbd_idx = 0;
 int crs_idx = 0;
 
-int mode = 1;
-int newmode = 0;
+int mode;
 enum mode {INVALID, COMMAND, INTERACTIVE, DEBUG};
+#define MODE_LEN 4
 const char* mode_strings[] = {"invalid", "command", "interactive", "debug"};
-
 const char* selectMode = "--> Input Mode: [1] Command - [2] Interactive - [3] Debug";
-
 
 int verbosity = 0;
 enum verbosity {SILENT, STANDARD, VERBOSE};
+#define VERBOSITY_LEN 3
 const char* verbosity_strings[] = {"silent", "standard", "verbose"};
 
 void setup() {
@@ -31,8 +30,8 @@ void setup() {
   delay(1000);
   SerialClear();
 
-  verbosity = EEPROM.read(EE_VERBOSITY) % (sizeof(verbosity) + 1);
-  mode = EEPROM.read(EE_MODE) % (sizeof(verbosity) + 1);
+  verbosity = EEPROM.read(EE_VERBOSITY) % VERBOSITY_LEN;
+  mode = EEPROM.read(EE_MODE) % MODE_LEN;
   if (mode == 0) mode++;
 
   SerialPrintfln(
@@ -40,9 +39,9 @@ void setup() {
     mode_strings[mode], verbosity_strings[verbosity]
   );
   if (mode != COMMAND) {
-    SerialPrintfln("--> For help, ^Q, press 1, then enter 'help'");
+    HWSERIAL.println(F("--> For help, ^Q, press 1, then enter 'help'"));
   } else {
-    SerialPrintfln("--> Enter 'help' for the obvious.");
+    HWSERIAL.println(F("--> Enter 'help' for the obvious."));
   }
 }
 
@@ -89,11 +88,11 @@ void help() {
 		"  Verbose  -- Too much information\n\r"
 		"\n\r"
 		"COMMAND MODE:\n\r"
-		"  A single char literal can be enclosed in braces. If integer is included \n\r"
-		"  after the char or keyname, it repeats that keypress i times.\n\r"
+		"  A single char literal can be enclosed in braces. If integer i is \n\r"
+		"  included after the char or keyname, it repeats that keypress i times.\n\r"
 		"\n\r"
 		"  Commands:\n\r"
-		"    sendraw -- Send the following text literally4\n\r"
+		"    sendraw -- Send the following text literally\n\r"
 		"    send    -- Send an interpreted string\n\r"
 		"\n\r"
 		"  Modifiers: Prepended to a char to modify them, as in ^C for Ctrl-C\n\r"
@@ -105,6 +104,7 @@ void help() {
 		"    {Down}              {Left}             {Right}            {Home}\n\r"
 		"    {End}               {PgUp}             {PgDn}             {Windows}/{Win}\n\r"
 		"    {F1}..{F12}\n\r"
+		"  These keypresses can also be entered as a singular command.\n\r"
 		"\n\r"
 		"There's other stuff too, see the docs.\n\r"
   ));

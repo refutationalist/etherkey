@@ -20,11 +20,11 @@ VERBOSITY: Changed via ^S
   Verbose  -- Too much information
 
 COMMAND MODE:
-  A single char literal can be enclosed in braces. If integer is included 
-  after the char or keyname, it repeats that keypress i times.
+  A single char literal can be enclosed in braces. If integer i is 
+  included after the char or keyname, it repeats that keypress i times.
 
   Commands:
-    sendraw -- Send the following text literally4
+    sendraw -- Send the following text literally
     send    -- Send an interpreted string
 
   Modifiers: Prepended to a char to modify them, as in ^C for Ctrl-C
@@ -36,5 +36,6 @@ COMMAND MODE:
     {Down}              {Left}             {Right}            {Home}
     {End}               {PgUp}             {PgDn}             {Windows}/{Win}
     {F1}..{F12}
+  These keypresses can also be entered as a singular command.
 
 There's other stuff too, see the docs.
