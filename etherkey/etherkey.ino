@@ -1,5 +1,10 @@
 #include "usb-keyboard.h"
 
+#ifdef ARDUINO_AVR_LEONARDO
+#include "Keyboard.h"
+#include "compat-arduino.h"
+#endif
+
 char in_ascii;
 char kbd_buff[KBD_BUFFSZ];
 int kbd_idx = 0;
