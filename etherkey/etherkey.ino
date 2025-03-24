@@ -6,7 +6,6 @@
 #include "compat-arduino.h"
 #endif
 
-
 #define BAUD 115200
 
 char in_ascii;
@@ -82,7 +81,7 @@ void help() {
 		"  Command Mode     -- Send complex strings with modifiers via commands\n\r"
 		"  Debug Mode       -- Show received characters from serial, no sending\n\r"
 		"\n\r"
-		"VERBOSITY: Changed via ^S\n\r"
+		"VERBOSITY: Change via ^S\n\r"
 		"  Silent   -- Minimal information, interactive is silent\n\r"
 		"  Standard -- Standard information, interactive shows what is sent\n\r"
 		"  Verbose  -- Too much information\n\r"

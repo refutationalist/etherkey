@@ -14,7 +14,7 @@ MODES: Change via ^Q
   Command Mode     -- Send complex strings with modifiers via commands
   Debug Mode       -- Show received characters from serial, no sending
 
-VERBOSITY: Changed via ^S
+VERBOSITY: Change via ^S
   Silent   -- Minimal information, interactive is silent
   Standard -- Standard information, interactive shows what is sent
   Verbose  -- Too much information

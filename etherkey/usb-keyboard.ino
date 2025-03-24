@@ -362,10 +362,10 @@ bool c_parse_ext(char* str, bool send_single, int modifier) {
     }
     return true;
   } else {
+    for ( char *p = str ; *p ; ++p) *p = tolower(*p);
+    
     switch (str2int(str)) {
-      case str2int("Sleep"):
       case str2int("sleep"):
-      case str2int("Delay"):
       case str2int("delay"):
         // Sleep a certain amount of time in ms
         if ((pch = strtok(NULL,"")) && (num = atoi(pch))) {
@@ -374,8 +374,8 @@ bool c_parse_ext(char* str, bool send_single, int modifier) {
 
         }
         break;
-      case str2int("UnicodeLinux"):
-      case str2int("UCL"):
+      case str2int("unicodelinux"):
+      case str2int("ucl"):
         // Send a single unicode character (on Linux)
         if ((pch = strtok (NULL,""))) {
           c_unicode(pch, true);
@@ -383,8 +383,8 @@ bool c_parse_ext(char* str, bool send_single, int modifier) {
         }
         break;
 
-      case str2int("UnicodeWindows"):
-      case str2int("UCW"):
+      case str2int("unicodewindows"):
+      case str2int("ucw"):
         // Send a single unicode character (on Windows)
         if ((pch = strtok (NULL,""))) {
           c_unicode(pch, false);
