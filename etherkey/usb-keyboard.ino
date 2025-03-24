@@ -306,24 +306,29 @@ void c_parse(char* str) {
 
   if (!(pch = strtok(str," "))) return;
   IF_VERBOSE SerialPrintfln("\tCommand: %-15s -> %x", pch, str2int(pch));
+
+  // let's lower case the thing
+  for ( char *p = pch ; *p ; ++p) *p = tolower(*p);
+
   switch (str2int(pch)) {
-    case str2int("SendRaw"):
     case str2int("sendraw"):
       // Send the rest of the line literally
       if ((pch = strtok (NULL,"")))
         c_sendraw(pch);
       break;
 
-    case str2int("Send"):
     case str2int("send"):
       // Send the rest of the line (and parse special characters)
       if ((pch = strtok (NULL,"")))
         c_send(pch);
       break;
 
-    case str2int("Help"):
     case str2int("help"):
       help();
+      break;
+
+    case str2int("clear"):
+      SerialClear();
       break;
 
     default:
