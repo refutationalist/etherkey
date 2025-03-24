@@ -5,6 +5,7 @@
 #include "compat-arduino.h"
 #endif
 
+
 #define BAUD 115200
 
 char in_ascii;
@@ -16,7 +17,9 @@ int mode = 1;
 int newmode = 0;
 enum mode {INVALID, COMMAND, INTERACTIVE, DEBUG};
 const char* mode_strings[] = {"invalid", "command", "interactive", "debug"};
+
 const char* selectMode = "--> Input Mode: [1] Command - [2] Interactive - [3] Debug";
+
 
 int verbosity = 0;
 enum verbosity {SILENT, STANDARD, VERBOSE};
@@ -27,7 +30,7 @@ void setup() {
   delay(1000);
   SerialClear();
   SerialPrintfln(
-    "--> etherkey running.  mode:[%s] verbosity:[%s]",
+    "--> Etherkey Online.  mode: %s, verbosity: %s",
     mode_strings[mode], verbosity_strings[verbosity]
   );
 }
