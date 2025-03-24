@@ -323,8 +323,7 @@ void c_parse(char* str) {
 
     case str2int("Help"):
     case str2int("help"):
-      // Display a informative help message
-      //TODO
+      help();
       break;
 
     default:

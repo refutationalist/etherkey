@@ -39,6 +39,11 @@ void setup() {
     "--> Etherkey Online: Mode: %s, Verbosity: %s",
     mode_strings[mode], verbosity_strings[verbosity]
   );
+  if (mode != COMMAND) {
+    SerialPrintfln("--> For help, ^Q, press 1, then enter 'help'");
+  } else {
+    SerialPrintfln("--> Enter 'help' for the obvious.");
+  }
 }
 
 void loop() {
@@ -66,4 +71,42 @@ void loop() {
         break;
     }
   }
+}
+
+void help() {
+
+  HWSERIAL.print(F(
+		"Etherkey is a serial controlled keyboard.\n\r"
+		"\n\r"
+		"MODES: Change via ^Q\n\r"
+		"  Interactive Mode -- all text is sent straight to target system\n\r"
+		"  Command Mode     -- Send complex strings with modifiers via commands\n\r"
+		"  Debug Mode       -- Show received characters from serial, no sending\n\r"
+		"\n\r"
+		"VERBOSITY: Changed via ^S\n\r"
+		"  Silent   -- Minimal information, interactive is silent\n\r"
+		"  Standard -- Standard information, interactive shows what is sent\n\r"
+		"  Verbose  -- Too much information\n\r"
+		"\n\r"
+		"COMMAND MODE:\n\r"
+		"  A single char literal can be enclosed in braces. If integer is included \n\r"
+		"  after the char or keyname, it repeats that keypress i times.\n\r"
+		"\n\r"
+		"  Commands:\n\r"
+		"    sendraw -- Send the following text literally4\n\r"
+		"    send    -- Send an interpreted string\n\r"
+		"\n\r"
+		"  Modifiers: Prepended to a char to modify them, as in ^C for Ctrl-C\n\r"
+		"    ! ALT          + SHIFT          ^ CTRL          # WIN\n\r"
+		"\n\r"
+		"  Keynames: Send non-printable characters: (case indifferent)\n\r"
+		"    {Enter}             {Escape}           {Space}            {Tab}\n\r"
+		"    {Backspace}/{BS}    {Delete}/{Del}     {Insert}/{Ins}     {Up}\n\r"
+		"    {Down}              {Left}             {Right}            {Home}\n\r"
+		"    {End}               {PgUp}             {PgDn}             {Windows}/{Win}\n\r"
+		"    {F1}..{F12}\n\r"
+		"\n\r"
+		"There's other stuff too, see the docs.\n\r"
+  ));
+
 }
