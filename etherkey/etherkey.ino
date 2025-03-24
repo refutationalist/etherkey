@@ -1,4 +1,5 @@
 #include "usb-keyboard.h"
+#include <EEPROM.h>
 
 #ifdef ARDUINO_AVR_LEONARDO
 #include "Keyboard.h"
@@ -29,6 +30,11 @@ void setup() {
   HWSERIAL.begin(BAUD);
   delay(1000);
   SerialClear();
+
+  verbosity = EEPROM.read(EE_VERBOSITY) % (sizeof(verbosity) + 1);
+  mode = EEPROM.read(EE_MODE) % (sizeof(verbosity) + 1);
+  if (mode == 0) mode++;
+
   SerialPrintfln(
     "--> Etherkey Online.  mode: %s, verbosity: %s",
     mode_strings[mode], verbosity_strings[verbosity]

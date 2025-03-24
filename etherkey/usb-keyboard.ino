@@ -28,6 +28,7 @@ int mode_select(char* in_ascii) {
         mode = *in_ascii - '0';
         SerialClear();
         SerialPrintfln("--> Switching to mode: %s", mode_strings[mode]);
+        EEPROM.update(EE_MODE, mode);
         return 1;
 
       // are we the escape key?   then ditch.
@@ -54,6 +55,7 @@ int verbose_select(char in_ascii) {
   if (in_ascii == VPREFIX) {
     verbosity = (++verbosity) % (sizeof(verbosity) + 1);
     SerialPrintfln("--> Verbosity: %s", verbosity_strings[verbosity]);
+    EEPROM.update(EE_VERBOSITY, verbosity);
     return 1;
   } else {
     return 0;

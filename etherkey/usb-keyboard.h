@@ -9,6 +9,11 @@
 #define VPREFIX 19 // CTRL-S
 #define PEEK_EMPTY 255
 
+// I picked these locations at random
+#define EE_MODE 56
+#define EE_VERBOSITY 57
+
+
 // Util functions
 int mode_select(char* in_ascii);
 int verbose_select(char in_ascii);
