@@ -23,3 +23,5 @@
 // https://github.com/arduino/ArduinoCore-avr/pull/446
 
 #define keyboard_leds 0
+
+#define PEEK_EMPTY -1

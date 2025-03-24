@@ -106,7 +106,7 @@ uint16_t special_char_to_keycode(char in_ascii) {
       break;
     case 27:
       in_ascii = HWSERIAL.peek();
-      if(in_ascii == 255) {
+      if(in_ascii == PEEK_EMPTY) {
         keycode = KEY_ESC;
       } else {
         HWSERIAL.read();

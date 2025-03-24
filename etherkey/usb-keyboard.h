@@ -7,6 +7,7 @@
 #define KEYNAME_BUFFSZ 25
 #define PREFIX 17 // CTRL-Q
 #define VPREFIX 19 // CTRL-S
+#define PEEK_EMPTY 255
 
 // Util functions
 int mode_select(char* in_ascii);
