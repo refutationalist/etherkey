@@ -36,7 +36,7 @@ void setup() {
   if (mode == 0) mode++;
 
   SerialPrintfln(
-    "--> Etherkey Online.  mode: %s, verbosity: %s",
+    "--> Etherkey Online: Mode: %s, Verbosity: %s",
     mode_strings[mode], verbosity_strings[verbosity]
   );
 }

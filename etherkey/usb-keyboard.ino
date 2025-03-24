@@ -331,8 +331,7 @@ void c_parse(char* str) {
       // Check if input is a keyname and send it
 
       if (!c_parse_ext(pch, false, 0)) {
-        // Show warning about invalid command
-        //TODO
+        SerialPrintfln("--> Bad command or taco");
       }
       break;
   }
