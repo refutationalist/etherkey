@@ -123,11 +123,13 @@ uint16_t keyname_to_keycode(const char* keyname) {
   uint16_t keycode = 0;
   char keyname_lower[KEYNAME_BUFFSZ];
 
+  strncpy(keyname_lower, keyname, KEYNAME_BUFFSZ);
+
   IF_VERBOSE SerialPrintfln("\tKeyname: %-15s -> %x", keyname, str2int(keyname));
 
   // keyname matching shall be case-insensitive
   for (uint8_t i = 0; i <= strlen(keyname); i++) {
-    keyname_lower[i] = tolower(keyname[i]);
+    keyname_lower[i] = tolower(keyname_lower[i]);
   }
 
   // F1 - F12
@@ -327,6 +329,7 @@ void c_parse(char* str) {
 
     default:
       // Check if input is a keyname and send it
+
       if (!c_parse_ext(pch, false, 0)) {
         // Show warning about invalid command
         //TODO
