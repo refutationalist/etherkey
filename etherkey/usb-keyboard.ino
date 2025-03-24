@@ -1,39 +1,64 @@
 #include "usb-keyboard.h"
 
 // Util functions
-int mode_select(char in_ascii, int oldmode) {
+int mode_select(char* in_ascii) {
   int newmode = 0;
   char peekChar;
 
-  if (in_ascii == PREFIX) {
+  if (*in_ascii == PREFIX) {
     SerialPrintf("%s", selectMode);
     do {
+
+      // wait for a char to become available,
+      // then see what it is without grabbing
       while (HWSERIAL.available() == 0) {
         delay(100);
       }
       peekChar = HWSERIAL.peek();
-      if (peekChar == PREFIX) {
-        in_ascii = HWSERIAL.read();
+
+      // are we a prefix character?  then just send it.
+      if (peekChar == PREFIX  || peekChar == VPREFIX) {
+        *in_ascii = HWSERIAL.read();
         SerialDeleteChars(strlen(selectMode));
         return 0;
+      
+      // are we one of the modal numbers?  then change mode.
       } else if (peekChar > '0' && peekChar < ('0'+sizeof(mode_strings)/sizeof(char*))) {
-        in_ascii = HWSERIAL.read();
-        newmode = in_ascii - '0';
+        *in_ascii = HWSERIAL.read();
+        mode = *in_ascii - '0';
         SerialClear();
-        SerialPrintfln("Switching to %s mode", mode_strings[newmode]);
-        return newmode;
+        SerialPrintfln("--> Switching to mode: %s", mode_strings[mode]);
+        return 1;
+
+      // are we the escape key?   then ditch.
       } else if (peekChar == 27) {
-        in_ascii = HWSERIAL.read();
+        HWSERIAL.read();
         SerialDeleteChars(strlen(selectMode));
-        return oldmode;
+        return 0;
+
+      // are we any other key?  try again.
       } else {
-        in_ascii = HWSERIAL.read();
+        HWSERIAL.read();
         SerialDeleteChars(strlen(selectMode));
         SerialPrintf("%s", selectMode);
       }
-    } while (peekChar != 27 || peekChar != PREFIX || (peekChar >= 49 && peekChar <= 51));
+    } while (peekChar != 27 || peekChar != PREFIX || peekChar != VPREFIX || (peekChar >= 49 && peekChar <= 51));
+    //          is not esc  ||  is not ^Q         ||  is not ^S          ||  is not between 1 and 3 inclusive
   }
   return 0;
+}
+
+int verbose_select(char in_ascii) {
+  int newverbose;
+
+  if (in_ascii == VPREFIX) {
+    verbosity = (++verbosity) % (sizeof(verbosity) + 1);
+    SerialPrintfln("--> Verbosity: %s", verbosity_strings[verbosity]);
+    return 1;
+  } else {
+    return 0;
+  }
+
 }
 
 uint16_t escape_sequence_to_keycode(char key) {
@@ -96,9 +121,7 @@ uint16_t keyname_to_keycode(const char* keyname) {
   uint16_t keycode = 0;
   char keyname_lower[KEYNAME_BUFFSZ];
 
-#ifdef MYDEBUG
-  SerialPrintfln("\tKeyname: %-15s -> %x", keyname, str2int(keyname));
-#endif
+  IF_VERBOSE SerialPrintfln("\tKeyname: %-15s -> %x", keyname, str2int(keyname));
 
   // keyname matching shall be case-insensitive
   for (uint8_t i = 0; i <= strlen(keyname); i++) {
@@ -179,13 +202,15 @@ uint16_t keyname_to_keycode(const char* keyname) {
 void usb_send_key(uint16_t key, uint16_t mod=0) {
   // Uses Keyboard.press from the Teensyduino Core Library
   // key can be either a ascii char or a keycode
-#ifdef MYDEBUG
-  char key_b[33];
-  itoa(key, key_b, 2);
-  char mod_b[33];
-  itoa(mod, mod_b, 2);
-  SerialPrintfln("\tSendKey: %6i = %08s | mod: %6i = %08s", key, key_b, mod, mod_b);
-#endif
+
+  IF_VERBOSE {
+    char key_b[33];
+    itoa(key, key_b, 2);
+    char mod_b[33];
+    itoa(mod, mod_b, 2);
+    SerialPrintfln("\tSendKey: %6i = %08s | mod: %6i = %08s", key, key_b, mod, mod_b);
+  }
+
   if (mod) Keyboard.press(mod);
   Keyboard.press(key);
   Keyboard.releaseAll();
@@ -200,17 +225,17 @@ void interactive_mode(char in_ascii) {
     usb_send_key(keycode);
     switch(keycode) {
       case KEY_ENTER:
-        SerialPrintfln("");
+        IF_STANDARD SerialPrintfln("");
         break;
       case KEY_BACKSPACE:
-        SerialDeleteChars(1);
+        IF_STANDARD SerialDeleteChars(1);
         break;
     }
   } else if (in_ascii <= 26) {
     in_ascii = in_ascii + 'a' - 1;
     usb_send_key(in_ascii, MODIFIERKEY_CTRL);
   } else {
-    HWSERIAL.write(in_ascii);
+    IF_STANDARD HWSERIAL.write(in_ascii);
     usb_send_key(in_ascii);
   }
 }
@@ -276,9 +301,7 @@ void c_parse(char* str) {
   char* pch;
 
   if (!(pch = strtok(str," "))) return;
-#ifdef MYDEBUG
-  SerialPrintfln("\tCommand: %-15s -> %x", pch, str2int(pch));
-#endif
+  IF_VERBOSE SerialPrintfln("\tCommand: %-15s -> %x", pch, str2int(pch));
   switch (str2int(pch)) {
     case str2int("SendRaw"):
     case str2int("sendraw"):
@@ -316,9 +339,7 @@ bool c_parse_ext(char* str, bool send_single, int modifier) {
   int num = 1;
   char* pch;
 
-#ifdef MYDEBUG
-  SerialPrintfln("\tCmd-ext: %-15s -> %x", str, str2int(str));
-#endif
+  IF_VERBOSE SerialPrintfln("\tCmd-ext: %-15s -> %x", str, str2int(str));
   if (!(key = keyname_to_keycode(str))) {
     if (send_single && !*(str+1) && (*str >= 32 || *str < 127)) {
       key = *str;
@@ -463,9 +484,7 @@ void c_unicode(char* pch, bool linux) {
 }
 
 void c_sleep(int ms) {
-#ifdef MYDEBUG
-  SerialPrintfln("\tSleeping: %i ms", ms);
-#endif
+  IF_VERBOSE SerialPrintfln("\tSleeping: %i ms", ms);
   delay(ms);
 }
 
