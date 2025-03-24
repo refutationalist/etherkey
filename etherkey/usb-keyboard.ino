@@ -107,6 +107,7 @@ uint16_t special_char_to_keycode(char in_ascii) {
       keycode = KEY_TAB;
       break;
     case 27:
+      delay(10);  // wait for more characters to hit the buffer
       in_ascii = HWSERIAL.peek();
       if(in_ascii == PEEK_EMPTY) {
         keycode = KEY_ESC;
